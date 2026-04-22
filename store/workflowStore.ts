@@ -1,6 +1,16 @@
 import { create } from "zustand";
 
-export const useWorkflowStore = create((set) => ({
+type WorkflowState = {
+    nodes: any[];
+    edges: any[];
+    selectedNodeId: string | null;
+
+    setNodes: (nodes: any[]) => void;
+    setEdges: (edges: any[]) => void;
+    setSelectedNodeId: (id: string) => void;
+};
+
+export const useWorkflowStore = create<WorkflowState>((set) => ({
     nodes: [],
     edges: [],
     selectedNodeId: null,
