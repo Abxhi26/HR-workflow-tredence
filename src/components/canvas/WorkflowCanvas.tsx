@@ -1,6 +1,7 @@
 import ReactFlow, {
     Background,
     Controls,
+    MiniMap,
     addEdge,
     applyNodeChanges,
     applyEdgeChanges,
@@ -28,7 +29,6 @@ export default function WorkflowCanvas() {
         setSelectedNodeId,
     } = useWorkflowStore();
 
-    // 🎨 Node Colors
     const getNodeStyle = (type: string) => {
         switch (type) {
             case "start":
@@ -46,7 +46,6 @@ export default function WorkflowCanvas() {
         }
     };
 
-    // 🔥 Format node label dynamically
     const formatNodeLabel = (data: any) => {
         const title = data.title || data.label;
 
@@ -58,7 +57,6 @@ export default function WorkflowCanvas() {
         return extra ? `${title}\n${extra}` : title;
     };
 
-    // ✅ Node updates
     const onNodesChange = useCallback(
         (changes: NodeChange[]) => {
             setNodes(applyNodeChanges(changes, nodes));
@@ -66,7 +64,6 @@ export default function WorkflowCanvas() {
         [nodes, setNodes]
     );
 
-    // ✅ Edge updates
     const onEdgesChange = useCallback(
         (changes: EdgeChange[]) => {
             setEdges(applyEdgeChanges(changes, edges));
@@ -74,7 +71,6 @@ export default function WorkflowCanvas() {
         [edges, setEdges]
     );
 
-    // 🔗 Connect
     const onConnect = useCallback(
         (params: Connection) => {
             setEdges(addEdge(params, edges));
@@ -82,13 +78,11 @@ export default function WorkflowCanvas() {
         [edges, setEdges]
     );
 
-    // ✅ Drag over
     const onDragOver = useCallback((event: React.DragEvent) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = "move";
     }, []);
 
-    // 🔥 Drop node with style + label
     const onDrop = useCallback(
         (event: React.DragEvent) => {
             event.preventDefault();
@@ -114,7 +108,7 @@ export default function WorkflowCanvas() {
                     padding: "10px",
                     fontWeight: "500",
                     border: "1px solid rgba(255,255,255,0.2)",
-                    whiteSpace: "pre-line", // 🔥 multiline support
+                    whiteSpace: "pre-line",
                 },
             };
 
@@ -123,16 +117,13 @@ export default function WorkflowCanvas() {
         [nodes, setNodes]
     );
 
-    // 🎯 Node click
     const onNodeClick = useCallback(
         (_: any, node: any) => {
-            console.log("Selected Node:", node.id);
             setSelectedNodeId(node.id);
         },
         [setSelectedNodeId]
     );
 
-    // 🔥 Inject dynamic labels (IMPORTANT)
     const updatedNodes = nodes.map((node: any) => ({
         ...node,
         data: {
@@ -144,7 +135,7 @@ export default function WorkflowCanvas() {
     return (
         <div className="h-full bg-[#0f172a]">
             <ReactFlow
-                nodes={updatedNodes} // ✅ IMPORTANT CHANGE
+                nodes={updatedNodes}
                 edges={edges}
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
@@ -156,6 +147,28 @@ export default function WorkflowCanvas() {
             >
                 <Background color="#444" gap={20} />
                 <Controls />
+                <MiniMap
+                    nodeColor={(node) => {
+                        switch (node.type) {
+                            case "start":
+                                return "#22c55e";
+                            case "task":
+                                return "#3b82f6";
+                            case "approval":
+                                return "#f59e0b";
+                            case "automation":
+                                return "#a855f7";
+                            case "end":
+                                return "#ef4444";
+                            default:
+                                return "#999";
+                        }
+                    }}
+                    nodeStrokeWidth={2}
+                    pannable
+                    zoomable
+                    className="bg-gray-900 border border-gray-700"
+                />
             </ReactFlow>
         </div>
     );
