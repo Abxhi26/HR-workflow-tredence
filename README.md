@@ -1,31 +1,35 @@
-# HR Workflow Designer (React + React Flow)
+# HR Workflow Designer
 
-A visual workflow builder that allows HR teams to design, configure, and simulate internal workflows such as onboarding, approvals, and automated processes.
+## Live Demo
+
+https://hr-workflow-vert.vercel.app
 
 ---
 
 ## Overview
 
-This project demonstrates:
+A visual workflow builder that allows HR teams to design, configure, and simulate internal workflows such as onboarding, approvals, and automated processes.
 
-* Interactive graph-based UI using React Flow
-* Dynamic node configuration forms
-* Workflow simulation using a mock API
-* JSON import/export for portability
-* Clean and scalable frontend architecture
+This project demonstrates strong frontend engineering concepts including graph-based UI design, dynamic forms, and state management.
 
 ---
 
-## Features
+## Key Features
 
-### Workflow Canvas
+### Workflow Builder
 
-* Drag and drop nodes
+* Drag and drop nodes onto canvas
 * Connect nodes with edges
-* MiniMap + zoom controls
-* Dynamic node labels (reflect form data)
+* Zoom, pan, and MiniMap support
+* Real-time node updates
 
-### Node Types
+### Node Configuration Panel
+
+* Dynamic forms based on node type
+* Controlled inputs with live updates
+* Clean state management using Zustand
+
+### Supported Node Types
 
 **Start Node**
 
@@ -33,7 +37,7 @@ This project demonstrates:
 
 **Task Node**
 
-* Title
+* Title (required)
 * Description
 * Assignee
 * Due Date
@@ -47,8 +51,8 @@ This project demonstrates:
 **Automation Node**
 
 * Title
-* Select Action (from API)
-* Dynamic parameters
+* Select action from API
+* Dynamic parameters based on action
 
 **End Node**
 
@@ -57,29 +61,58 @@ This project demonstrates:
 
 ---
 
-## Automation (Mock API)
+## Automation API (Mock)
 
-Returns actions like:
+Returns available automation actions:
 
-* Send Email → params: to, subject
-* Generate Document → params: template, recipient
+* Send Email → params: `to`, `subject`
+* Generate Document → params: `template`, `recipient`
 
 ---
 
 ## Simulation Panel
 
-* Runs workflow step-by-step
+* Executes workflow step-by-step
 * Displays execution logs
-* Uses actual node data
-* Simulates async execution
+* Uses real node data
+* Mimics backend processing
 
 ---
 
 ## JSON Import / Export
 
-* Export workflow as JSON
-* Import JSON to rebuild workflow
-* Includes transformation logic to normalize data
+* Export full workflow as JSON
+* Import JSON to rebuild workflows
+* Data normalization ensures compatibility
+
+---
+
+## Architecture
+
+### State Management
+
+* Zustand for global state (nodes, edges, selection)
+* Minimal boilerplate and high performance
+
+### UI Layer
+
+* React Flow for graph rendering and interactions
+* Tailwind CSS for styling
+
+### Dynamic Forms
+
+* Config-driven (`nodeFormConfig`)
+* Easily extendable for new node types
+
+### API Layer
+
+* Mock services for automations and simulation
+* Designed for easy backend replacement
+
+### Hooks
+
+* `useSimulation` abstracts simulation logic
+* Keeps UI components clean
 
 ---
 
@@ -88,74 +121,43 @@ Returns actions like:
 ```
 src/
   components/
-    canvas/        → React Flow canvas
-    forms/         → Node config panel
-    sidebar/       → Drag nodes
-    sandbox/       → Simulation panel
-  hooks/           → Custom hooks
-  services/        → API layer
-  store/           → Zustand store
-  utils/           → Config files
-  types/           → Types
+    canvas/        React Flow canvas
+    forms/         Node configuration panel
+    sidebar/       Node drag source
+    sandbox/       Simulation panel
+  hooks/           Custom hooks
+  services/        API layer
+  store/           Zustand store
+  utils/           Config and helpers
+  types/           Type definitions
 ```
-
----
-
-## Architecture Decisions
-
-### Zustand (State Management)
-
-* Lightweight
-* No boilerplate
-* Centralized node + edge state
-
-### React Flow
-
-* Handles graph logic (nodes, edges, drag, zoom)
-* Avoids reinventing graph system
-
-### Config-driven Forms
-
-* Forms generated via `nodeFormConfig`
-* Easy to scale for new node types
-
-### Hooks Separation
-
-* Simulation logic in `useSimulation`
-* UI stays clean and maintainable
-
-### Mock API Layer
-
-* Keeps frontend decoupled
-* Easy to replace with real backend
 
 ---
 
 ## Assumptions
 
-* Linear workflows (no cycle detection)
-* At least one start + end node
-* No backend persistence (in-memory only)
-* Minimal validation
-* Single-user usage
+* Linear workflows (no cycle detection implemented)
+* At least one start and end node expected
+* No backend persistence (in-memory state)
+* Minimal validation for faster iteration
 
 ---
 
-## How to Run
+## How to Run Locally
 
-### 1. Install dependencies
+1. Install dependencies
 
 ```
 npm install
 ```
 
-### 2. Start development server
+2. Start development server
 
 ```
 npm run dev
 ```
 
-### 3. Open in browser
+3. Open in browser
 
 ```
 http://localhost:5173
@@ -165,7 +167,7 @@ http://localhost:5173
 
 ## Test JSON (Import Example)
 
-Paste this into Import JSON:
+Use this to test import functionality:
 
 ```json
 {
@@ -233,34 +235,33 @@ Paste this into Import JSON:
 
 ## Design Notes
 
-* Node labels dynamically reflect form data
-* Workflow execution is sequential based on edges
-* Import JSON normalizes external structure
-* Tailwind used for fast UI styling
-* Minimal custom nodes to keep system stable
+* Node labels dynamically reflect configuration data
+* Workflow execution is sequential via edges
+* Import JSON is normalized for consistency
+* Focused on clarity, modularity, and scalability
 
 ---
 
 ## Future Improvements
 
-* Cycle detection
-* Undo / Redo
+* Workflow validation (missing links, cycles)
+* Undo / Redo functionality
 * Backend persistence
-* Validation UI on nodes
 * Auto layout
 * Role-based workflows
+* Node version history
 
 ---
 
 ## Conclusion
 
-This project focuses on:
+This project demonstrates:
 
-* Clean architecture
-* Dynamic UI handling
-* Graph-based workflows
-* Extensibility
+* Strong React architecture
+* Efficient state handling
+* Dynamic UI generation
+* Graph-based workflow design
 
-It can easily scale into a production-grade workflow system with backend integration.
+It is structured to scale into a production-ready workflow system.
 
 ---
