@@ -13,18 +13,36 @@ export default function Sidebar() {
     };
 
     return (
-        <div>
-            <h2 className="text-lg font-semibold mb-3">Nodes</h2>
-            {nodeTypes.map((node) => (
-                <div
-                    key={node.type}
-                    draggable
-                    onDragStart={(e) => onDragStart(e, node.type)}
-                    className="p-2 mb-2 bg-white border rounded cursor-pointer hover:bg-gray-100"
-                >
-                    {node.label}
-                </div>
-            ))}
+        <div className="h-full flex flex-col">
+
+            {/* Header */}
+            <h2 className="text-lg font-semibold mb-4 text-white">
+                Nodes
+            </h2>
+
+            {/* Node List */}
+            <div className="space-y-3">
+                {nodeTypes.map((node) => (
+                    <div
+                        key={node.type}
+                        draggable
+                        onDragStart={(e) => onDragStart(e, node.type)}
+                        className="
+                            p-3 
+                            rounded-lg 
+                            bg-gray-700 
+                            text-white 
+                            cursor-pointer 
+                            hover:bg-purple-600 
+                            transition 
+                            text-center 
+                            shadow-sm
+                        "
+                    >
+                        {node.label}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }

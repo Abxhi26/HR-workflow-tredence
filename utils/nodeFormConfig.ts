@@ -15,7 +15,7 @@ export const nodeFormConfig: any = {
     ],
     automation: [
         { key: "title", label: "Title", type: "text" },
-        { key: "action", label: "Action", type: "text" },
+        { key: "action", label: "Action", type: "select" },
     ],
     end: [
         { key: "message", label: "End Message", type: "text" },

@@ -1,6 +1,7 @@
 import ReactFlow, {
     Background,
     Controls,
+    MiniMap,
     addEdge,
     applyNodeChanges,
     applyEdgeChanges,
@@ -8,11 +9,9 @@ import ReactFlow, {
 
 import type {
     Connection,
-    Edge,
     NodeChange,
     EdgeChange,
 } from "reactflow";
-
 
 import "reactflow/dist/style.css";
 
@@ -30,7 +29,25 @@ export default function WorkflowCanvas() {
         setSelectedNodeId,
     } = useWorkflowStore();
 
-    // ✅ FIXED: Proper node changes handling
+    // 🎨 Node Colors
+    const getNodeStyle = (type: string) => {
+        switch (type) {
+            case "start":
+                return { background: "#22c55e", color: "#fff" }; // green
+            case "task":
+                return { background: "#3b82f6", color: "#fff" }; // blue
+            case "approval":
+                return { background: "#f59e0b", color: "#fff" }; // yellow
+            case "automation":
+                return { background: "#a855f7", color: "#fff" }; // purple
+            case "end":
+                return { background: "#ef4444", color: "#fff" }; // red
+            default:
+                return { background: "#6b7280", color: "#fff" };
+        }
+    };
+
+    // ✅ Handle node updates
     const onNodesChange = useCallback(
         (changes: NodeChange[]) => {
             setNodes(applyNodeChanges(changes, nodes));
@@ -38,7 +55,7 @@ export default function WorkflowCanvas() {
         [nodes, setNodes]
     );
 
-    // ✅ FIXED: Proper edge changes handling
+    // ✅ Handle edge updates
     const onEdgesChange = useCallback(
         (changes: EdgeChange[]) => {
             setEdges(applyEdgeChanges(changes, edges));
@@ -46,21 +63,30 @@ export default function WorkflowCanvas() {
         [edges, setEdges]
     );
 
-    // ✅ Connect nodes
+    // 🔗 Styled + Animated Edges
     const onConnect = useCallback(
         (params: Connection) => {
-            setEdges(addEdge(params, edges));
+            const newEdge = {
+                ...params,
+                animated: true,
+                style: {
+                    stroke: "#a855f7",
+                    strokeWidth: 2,
+                },
+            };
+
+            setEdges(addEdge(newEdge, edges));
         },
         [edges, setEdges]
     );
 
-    // ✅ Drag over (must prevent default)
+    // ✅ Drag over
     const onDragOver = useCallback((event: React.DragEvent) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = "move";
     }, []);
 
-    // ✅ Drop node on canvas
+    // 📍 Drop node
     const onDrop = useCallback(
         (event: React.DragEvent) => {
             event.preventDefault();
@@ -69,9 +95,12 @@ export default function WorkflowCanvas() {
 
             if (!type) return;
 
+            // Better positioning (relative to canvas)
+            const bounds = event.currentTarget.getBoundingClientRect();
+
             const position = {
-                x: event.clientX - 250,
-                y: event.clientY - 100,
+                x: event.clientX - bounds.left,
+                y: event.clientY - bounds.top,
             };
 
             const newNode = {
@@ -79,6 +108,13 @@ export default function WorkflowCanvas() {
                 type,
                 position,
                 data: { label: `${type} node` },
+                style: {
+                    ...getNodeStyle(type),
+                    borderRadius: "10px",
+                    padding: "10px",
+                    fontWeight: "500",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                },
             };
 
             setNodes([...nodes, newNode]);
@@ -86,17 +122,16 @@ export default function WorkflowCanvas() {
         [nodes, setNodes]
     );
 
-    // ✅ Node selection
+    // 🎯 Node selection
     const onNodeClick = useCallback(
         (_: any, node: any) => {
-            console.log("Selected Node:", node.id);
             setSelectedNodeId(node.id);
         },
         [setSelectedNodeId]
     );
 
     return (
-        <div className="h-full">
+        <div className="w-full h-full bg-gray-900">
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
@@ -108,8 +143,31 @@ export default function WorkflowCanvas() {
                 onNodeClick={onNodeClick}
                 fitView
             >
-                <Background />
+                {/* Grid */}
+                <Background color="#555" gap={20} />
+
+                {/* Controls */}
                 <Controls />
+
+                {/* MiniMap (🔥 looks impressive) */}
+                <MiniMap
+                    nodeColor={(node) => {
+                        switch (node.type) {
+                            case "start":
+                                return "#22c55e";
+                            case "task":
+                                return "#3b82f6";
+                            case "approval":
+                                return "#f59e0b";
+                            case "automation":
+                                return "#a855f7";
+                            case "end":
+                                return "#ef4444";
+                            default:
+                                return "#999";
+                        }
+                    }}
+                />
             </ReactFlow>
         </div>
     );
