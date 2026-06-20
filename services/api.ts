@@ -20,7 +20,6 @@ export const simulateWorkflow = async (workflow: any) => {
 
     const logs: string[] = [];
 
-    // 🔹 Find Start Node
     const startNode = nodes.find((n: any) => n.type === "start");
 
     if (!startNode) {
